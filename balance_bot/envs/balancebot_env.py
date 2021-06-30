@@ -98,8 +98,8 @@ class BalancebotEnv(gym.Env):
         cubePos, _ = p.getBasePositionAndOrientation(self.botId)
         return cubePos[2] < 0.15 or self._envStepCounter >= 1500
 
-    def _render(self, mode='human', close=False):
-        pass
+#    def _render(self, mode='human', close=False):
+#        pass
 
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
