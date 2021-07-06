@@ -9,6 +9,9 @@ from gym.utils import seeding
 import pybullet as p
 import pybullet_data
 
+#from PIL import Image
+#from IPython.display import display
+
 class BalancebotEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -98,8 +101,39 @@ class BalancebotEnv(gym.Env):
         cubePos, _ = p.getBasePositionAndOrientation(self.botId)
         return cubePos[2] < 0.15 or self._envStepCounter >= 1500
 
-#    def _render(self, mode='human', close=False):
-#        pass
+    def _render(self, mode='human', close=False):
+      #        pass
+      width = 320
+      height = 200
+      img_arr = p.getCameraImage(
+          width,
+          height,
+          viewMatrix=p.computeViewMatrixFromYawPitchRoll(
+              cameraTargetPosition=[0, 0, 0],
+              distance=2,
+              yaw=60,
+              pitch=-10,
+              roll=0,
+              upAxisIndex=2,
+          ),
+          projectionMatrix=p.computeProjectionMatrixFOV(
+              fov=60,
+              aspect=width/height,
+              nearVal=0.01,
+              farVal=100,
+          ),
+          shadow=True,
+          lightDirection=[1, 1, 1],
+      )
+      w = img_arr[0]  #width of the image, in pixels
+      h = img_arr[1]  #height of the image, in pixels
+      rgb = img_arr[2]  #color data RGB
+      dep = img_arr[3]  #depth data
+      #print("w=",w,"h=",h)
+      np_img_arr = np.reshape(rgb, (h, w, 4))
+      frame = np_img_arr[:, :, :3]
+      return frame
+
 
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
